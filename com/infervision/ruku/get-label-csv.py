@@ -30,12 +30,12 @@ def get_csv(src_path, df, lists):
 
 if __name__ == '__main__':
     start = time.time()
-    src_path = "/media/tx-eva-data/Data1/tmp/CN319002/label/CT/2019.08.27_DATA-93"
+    src_path = "/media/tx-eva-data/Data1/tmp/2019_08_30_testData_CS734001/label/CT/DATA-181"
     # 先创建一个空的dataframe
     df = pd.DataFrame(
         columns=["version","doctor","label_date","first_auditor","first_audit_date","second_auditor","second_audit_date","device","project","mark_rule","collect_path",	"data_type","model_name","check_time"
 ])
-    version = "2019.08.27_DATA-93" # version的值是等于jira的创建时间_task编号
+    version = "2019.08.28_DATA-181" # version的值是等于jira的创建时间_task编号
     device = "CT"
     project = "CT_Detection"
     mark_rule = "CT_Chest_Test_1.0"
