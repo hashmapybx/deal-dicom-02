@@ -108,7 +108,7 @@ def Worker(tuomin_path):
 if __name__ == '__main__':
     start = time.time()
 
-    originalDataPath = "/media/tx-eva-data/Data4/深圳三院/DR"
+    originalDataPath = "/media/tx-eva-data/Data3/2019-09-02-德化医院/德化县医院/6/2019-09-08_dehuaxianyiyuan_dr_liuyue/dicom"
     cpuCount = cpu_count()  # 计算本机CPU核数
     # save_path = originalDataPath + '_save'#脱敏文件保存路径
     save_path = originalDataPath + "_save"
@@ -131,7 +131,7 @@ if __name__ == '__main__':
         q.put(None)
     for p in multiprocessing:
         p.join()
-    with open(originalDataPath + '_dataClean.log', 'a+') as outfile:
+    with open(originalDataPath + '_desenitional.log', 'a+') as outfile:
         for i in range(0, cpuCount - 2):
             tuominPath = originalDataPath + str(i) + '_qingxi.log'
             with open(tuominPath) as infile:

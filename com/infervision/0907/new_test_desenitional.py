@@ -18,7 +18,7 @@ from multiprocessing import cpu_count, Process, JoinableQueue
 '''
 
 
-def desensitization(filepath, originalDataPath, tuomin_path):
+def desensitization(save_path, filepath, originalDataPath, tuomin_path):
     necessary_tag = [
         (0x0008, 0x0090),  # Referring Physician's Name
         (0x0010, 0x0010),  # Patient's Name
@@ -51,15 +51,15 @@ def desensitization(filepath, originalDataPath, tuomin_path):
             else:
                 ID = str(info.StudyInstanceUID)
         SeriesInstanceUID = info.SeriesInstanceUID
-        file_date = filepath.split('/')[5][:10]
+        file_date = filepath.split('/')[6][:10]
         file_name = filepath.split('/')[-1]
         folder_name = filepath.replace(originalDataPath, '')
         folder_name1 = folder_name.replace(file_name, '')
-        # folder_path = save_path + folder_name1
-        # try:
-        #     os.makedirs(folder_path)
-        # except OSError:
-        #     pass
+        folder_path = save_path + folder_name1
+        try:
+            os.makedirs(folder_path)
+        except OSError:
+            pass
         for necessary in necessary_tag:
             name = necessary[1]
             tag = TupleTag(necessary)
@@ -77,14 +77,12 @@ def desensitization(filepath, originalDataPath, tuomin_path):
             tag = TupleTag(unnecessar)
             info.pop(tag, None)
         print(filepath + "   Sensitive information has been deleted!!!!")
-        #
-        # out_path = os.path.join(folder_path, file_name)
+        out_path = os.path.join(folder_path, file_name)
         # try:
         #     st = info.SliceThickness
         try:
-            #     info[0x0018,0x1151].value = int(float(info[0x0018,0x1151].value))
-            print(file_date)
-            # info.save_as(out_path)
+            info[0x0018,0x1151].value = int(float(info[0x0018,0x1151].value))
+            info.save_as(out_path)
         except:
             # 由于源文件file_meta缺失导致文件无法重写保存的原因
             # info.file_meta.MediaStorageSOPClassUID = info.SOPClassUID
@@ -92,18 +90,18 @@ def desensitization(filepath, originalDataPath, tuomin_path):
             # info.file_meta.ImplementationClassUID = info.SOPClassUID
             # info.save_as(out_path)
             pass
-        # os.system('gdcmconv  -raw %s %s' % (out_path, out_path))
+        os.system('gdcmconv  -raw %s %s' % (out_path, out_path))
         logging.basicConfig(level=logging.INFO,
-                            format='%(message)s',
+                            format='%(asctime)s - %(name)s - %(levelname)s -%(module)s:  %(message)s',
                             filename=tuomin_path,  # 此处为脱敏日志路径
                             filemode='w')
         # format = '%(asctime)s - %(name)s - %(levelname)s -%(module)s:  %(message)s',
         # datefmt = '%Y-%m-%d %H:%M:%S %p',
         # level = 10
-        logging.info('  [%s]\t%s\t%s\t%s\t' % (file_date, ID, filepath, "Sensitive information has been removed!!"))
+        logging.info('--[%s]--%s\t%s\t%s\t' % (file_date, ID, filepath, "Sensitive information has been removed!!"))
     except:
-        # with open(originalDataPath + '/'+str(i) + '_error.log', 'a+') as errorfile:
-        #     print >> errorfile, filepath
+        with open(originalDataPath + '/'+str(i) + '_error.log', 'a+') as errorfile:
+            print >> errorfile, filepath
         pass
 
 def Worker(tuomin_path):
@@ -116,17 +114,19 @@ def Worker(tuomin_path):
 
 
 if __name__ == '__main__':
+    '''
+    这个脚本是处理脱敏日志的 
+    需要给path到原始数据库的操作
+    '''
 
     start = time.time()
-
-    originalDataPath = "/media/tx-eva-data/Data3/中日友好"
+    originalDataPath = "/media/tx-eva-data/Data3/2019-09-02-德化医院/德化县医院/6/2019-09-08_dehuaxianyiyuan_dr_liuyue/dicom"
     cpuCount = cpu_count()  # 计算本机CPU核数
-    # save_path = originalDataPath + '_save'#脱敏文件保存路径
-    # save_path = originalDataPath + '/'+"_save"
+    save_path = originalDataPath + '_save'#脱敏文件保存路径
     q = JoinableQueue()
     multiprocessing = []
     for i in range(0, cpuCount - 2):  # 创建cpu_count()个进程
-        tuomin_path = originalDataPath + '/'+str(i) + '_qingxi.log'  # 每个进程打印出一份脱敏日志
+        tuomin_path = originalDataPath + '/'+str(i) + '_tuomin.log'  # 每个进程打印出一份脱敏日志
         if not os.path.exists(tuomin_path):
             os.system('touch %s' % tuomin_path)
         p = Process(target=Worker, args=(tuomin_path,))
@@ -135,16 +135,17 @@ if __name__ == '__main__':
         multiprocessing.append(p)
     for dirpath, dirnames, filenames in os.walk(originalDataPath):
         for file in filenames:
-            filepath = os.path.join(dirpath, file)
-            q.put([filepath, originalDataPath])
+            filepath = os.path.join(dirpath, file) # dicomfile path
+            pici_time = filepath.split('/')[6][:10]
+            q.put([save_path, filepath, originalDataPath])
     q.join()
     for i in range(0, cpuCount - 2):
         q.put(None)
     for p in multiprocessing:
         p.join()
-    with open(originalDataPath + '/'+'_dataClean.log', 'a+') as outfile:
+    with open(originalDataPath + '/'+pici_time+'_desensitization.log', 'a+') as outfile:
         for i in range(0, cpuCount - 2):
-            tuominPath = originalDataPath + '/'+str(i) + '_qingxi.log'
+            tuominPath = originalDataPath + '/'+str(i) + '_tuomin.log'
             with open(tuominPath) as infile:
                 for line in infile:
                     outfile.write(line)

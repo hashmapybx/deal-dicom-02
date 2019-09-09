@@ -53,7 +53,7 @@ def desensitization(filepath, originalDataPath, tuomin_path):
                 ID = str(info.AccessionNumber)
             else:
                 ID = str(info.AccessionNumber)
-        file_date = filepath.split('/')[5][:10]
+        file_date = filepath.split('/')[6][:10]
         file_name = filepath.split('/')[-1]
         folder_name = filepath.replace(originalDataPath, '')
         folder_name1 = folder_name.replace(file_name, '')
@@ -78,7 +78,7 @@ def desensitization(filepath, originalDataPath, tuomin_path):
         for unnecessar in unnecessar_tag:
             tag = TupleTag(unnecessar)
             info.pop(tag, None)
-        print(filepath + "   relative file has been renamed and clean!!!")
+        print(filepath + "relative information of dicom files have been renamed and cleaned!!!")
         #
         # out_path = os.path.join(folder_path, file_name)
         # try:
@@ -102,7 +102,7 @@ def desensitization(filepath, originalDataPath, tuomin_path):
         # format = '%(asctime)s - %(name)s - %(levelname)s -%(module)s:  %(message)s',
         # datefmt = '%Y-%m-%d %H:%M:%S %p',
         # level = 10
-        logging.info('  [%s]\t%s\t%s\t%s\t' % (file_date, ID, filepath, "relative file has been renamed and clean!!!"))
+        logging.info('--[%s]-- %s\t%s\t%s\t' % (file_date, ID, '/'.join(filepath.split('/')[4:]), "relative information of dicom files have been renamed and cleaned!!!"))
     except:
         # with open(originalDataPath + '/'+str(i) + '_error.log', 'a+') as errorfile:
         #     print >> errorfile, filepath
@@ -121,14 +121,14 @@ if __name__ == '__main__':
 
     start = time.time()
 
-    originalDataPath = "/media/tx-eva-data/Data3/data_clean"
+    originalDataPath = "/media/tx-eva-data/Data3/aaaa/中日友好"
     cpuCount = cpu_count()  # 计算本机CPU核数
     # save_path = originalDataPath + '_save'#脱敏文件保存路径
     # save_path = originalDataPath + '/'+"_save"
     q = JoinableQueue()
     multiprocessing = []
     for i in range(0, cpuCount - 2):  # 创建cpu_count()个进程
-        tuomin_path = originalDataPath + '/'+str(i) + '_qingxi.log'  # 每个进程打印出一份脱敏日志
+        tuomin_path = originalDataPath + '/'+ str(i) + '_qingxi.log'  # 每个进程打印出一份脱敏日志
         if not os.path.exists(tuomin_path):
             os.system('touch %s' % tuomin_path)
         p = Process(target=Worker, args=(tuomin_path,))
@@ -138,20 +138,21 @@ if __name__ == '__main__':
     for dirpath, dirnames, filenames in os.walk(originalDataPath):
         for file in filenames:
             filepath = os.path.join(dirpath, file)
+            pici_time = filepath.split('/')[6][:10]
             q.put([filepath, originalDataPath])
     q.join()
     for i in range(0, cpuCount - 2):
         q.put(None)
     for p in multiprocessing:
         p.join()
-    with open(originalDataPath + '/'+'_dataClean.log', 'a+') as outfile:
+    with open(originalDataPath + '/'+pici_time+'_dataClean.log', 'a+') as outfile:
         for i in range(0, cpuCount - 2):
             tuominPath = originalDataPath + '/'+str(i) + '_qingxi.log'
             with open(tuominPath) as infile:
                 for line in infile:
                     outfile.write(line)
             os.remove(tuominPath)
-    with open(originalDataPath + '/'+'_error.log', 'a+') as errorfile:
+    with open(originalDataPath + '/' + '_error.log', 'a+') as errorfile:
         for i in range(0, cpuCount):
             errorPath = originalDataPath + '/'+str(i) + '_error.log'
             try:

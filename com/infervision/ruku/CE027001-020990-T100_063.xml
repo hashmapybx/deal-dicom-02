@@ -1,0 +1,27 @@
+<annotation>
+  <folder>anno_mode</folder>
+  <filename>GZZS020990T100_063</filename>
+  <path>/home/tx-data-18/Desktop/2018_03_23_ZhaoQiguang_Ll/2018_03_23_ZhaoQiguang_feedback/anno_mode/GZZS020990T100_063.xml</path>
+  <source>
+    <database>Unknown</database>
+  </source>
+  <size>
+    <width>0</width>
+    <height>0</height>
+    <depth>3</depth>
+  </size>
+  <segmented>0</segmented>
+  <object>
+    <name>0-3nodule</name>
+    <lobe_pos>L_super_lb_apicoposter</lobe_pos>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>357</xmin>
+      <ymin>302</ymin>
+      <xmax>377</xmax>
+      <ymax>322</ymax>
+    </bndbox>
+  </object>
+</annotation>

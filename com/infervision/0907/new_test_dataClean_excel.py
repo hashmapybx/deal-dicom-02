@@ -11,6 +11,12 @@ from xlrd import xldate_as_tuple
 import datetime
 # 创建workboot对象
 
+'''
+这个脚本是用来拆分数据清洗表格 脱敏记录表格的 
+
+'''
+
+
 def write_excel():
     list_0 = []
     list_1 = []
@@ -18,7 +24,7 @@ def write_excel():
     list_3 =[]
 
     list_date = {}
-    data = xlrd.open_workbook("/media/tx-eva-data/Data1/dailyFile/数据清洗记录copy.xlsx")
+    data = xlrd.open_workbook("/media/tx-eva-data/Data1/CFDA_file/清洗记录表/数据清洗记录(1).xlsx")
     # 获取每一个sheet的name?
     table = data.sheets()[0]  # 第一张表
     print(type(table))
@@ -61,7 +67,12 @@ def write_excel():
                     for a in range(0, len(list_3)):
                         sheet1.write(3, a, list_3[a].strip(), set_style_1('宋体', 205, False))
                     for a in range(0, len(table.row_values(i))):
-                        sheet1.write(4, a, datetime.datetime(*xldate_as_tuple(table.row_values(i)[a], 0)).strftime('%Y-%m-%d') if a == 3 else  table.row_values(i)[a], set_style_1('Times New Roman', 205, False) if a ==3 else set_style_1('宋体', 205, False))
+                        if a == 1:
+                            hosp_dict_id = get_hosp_dict()
+                            print(hosp_dict_id[table.row_values(i)[a]])
+                            sheet1.write(4, a, hosp_dict_id[table.row_values(i)[a]], set_style_2('Time New Roman', 205, False))
+                        else:
+                            sheet1.write(4, a, datetime.datetime(*xldate_as_tuple(table.row_values(i)[a], 0)).strftime('%Y-%m-%d') if a == 3 else  table.row_values(i)[a], set_style_1('宋体', 205, False) if a ==4 or a== 8 or a== 9 else set_style_1('Times New Roman', 205, False))
                         # datetime.datetime(*xldate_as_tuple(table.row_values(i)[a], 0))
                     sheet1.merge(0, 0, 0, 9)
                     sheet1.merge(1, 1, 0, 9)
@@ -69,17 +80,17 @@ def write_excel():
                     sheet1.write(10, 5, '记录人签字', set_style_1('宋体', 205, False))
                     sheet1.write(10, 6, '钏兴炳', set_style_1('宋体', 205, False))
                     sheet1.write(10, 7, '日期', set_style_1('宋体', 205, False))
-                    sheet1.write(10, 8,  deal_date(date_i), set_style_2('Times New Roman', 205, False))
+                    sheet1.write(10, 8,  date_i, set_style_2('Times New Roman', 205, False))
 
-                    sheet1.write(11, 5, '审核人签字', set_style_1('宋体', 205, False))
+                    sheet1.write(11, 5, '复核人签字', set_style_1('宋体', 205, False))
                     sheet1.write(11, 6, '刘丰恺', set_style_1('宋体', 205, False))
                     sheet1.write(11, 7, '日期', set_style_1('宋体', 205, False))
                     sheet1.write(11, 8, deal_date(date_i), set_style_2('Times New Roman', 205, False))
-                    workboot.save("/media/tx-eva-data/Data1/dailyFile/test/%s.xls" % date_i)
+                    workboot.save("/media/tx-eva-data/Data1/CFDA_file/清洗记录表/split_table/%s.xls" % date_i)
                 else:
                     # 表示某一天有多条数据了
 
-                    read_work = xlrd.open_workbook("/media/tx-eva-data/Data1/dailyFile/test/%s.xls" % date_i)
+                    read_work = xlrd.open_workbook("/media/tx-eva-data/Data1/CFDA_file/清洗记录表/split_table/%s.xls" % date_i)
                     xlrd_table = read_work.sheets()[0]
                     workboot1 = xlwt.Workbook()  # 每次写的时候创建一个新的xlwt的对象
                     sheet2 = workboot1.add_sheet('sheet1', cell_overwrite_ok=True)
@@ -101,10 +112,15 @@ def write_excel():
                                 break
                             else:
                                 for a in range(0, len(xlrd_table.row_values(ii))):
-                                    sheet2.write(ii, a, xlrd_table.row_values(ii)[a], set_style_1('宋体', 205, False))
+                                    sheet2.write(ii, a, xlrd_table.row_values(ii)[a], set_style_1('Times New Roman', 205, False))
 
                     for a in range(0, len(table.row_values(i))):
-                        sheet2.write(4+list_date[date_i], a, datetime.datetime(*xldate_as_tuple(table.row_values(i)[a], 0)).strftime('%Y-%m-%d') if a == 3 else table.row_values(i)[a], set_style_1('Times New Roman', 205, False) if a ==3 else set_style_1('宋体', 205, False))
+                        if a == 1:
+                            hosp_dict_ids = get_hosp_dict()
+                            sheet2.write(4+list_date[date_i], a, hosp_dict_ids[table.row_values(i)[a]],
+                                         set_style_2('Time New Roman', 205, False))
+                        else:
+                            sheet2.write(4+list_date[date_i], a, datetime.datetime(*xldate_as_tuple(table.row_values(i)[a], 0)).strftime('%Y-%m-%d') if a == 3 else table.row_values(i)[a], set_style_1('宋体', 205, False) if a ==4 or a== 8 or a== 9 else set_style_1('Times New Roman', 205, False))
                     list_date[date_i] = list_date[date_i] +1 # 对应的日期重复次数加1
                     sheet2.merge(0, 0, 0, 9)  #合并表头
                     sheet2.merge(1,1,0,9)
@@ -113,13 +129,32 @@ def write_excel():
                     sheet2.write(10, 5, '记录人签字: ', set_style_1('宋体', 205, False))
                     sheet2.write(10, 6, '钏兴炳', set_style_1('宋体', 205, False))
                     sheet2.write(10, 7, '日期: ', set_style_1('宋体', 205, False))
-                    sheet2.write(10, 8, deal_date(date_i), set_style_1('宋体', 205, False))
+                    sheet2.write(10, 8, date_i, set_style_1('Times New Roman', 205, False))
 
                     sheet2.write(11, 5, '审核人签字: ', set_style_1('宋体', 205, False))
                     sheet2.write(11, 6, '刘丰恺', set_style_1('宋体', 205, False))
                     sheet2.write(11, 7, '日期: ', set_style_1('宋体', 205, False))
-                    sheet2.write(11, 8, deal_date(date_i), set_style_1('宋体', 205, False))
-                    workboot1.save("/media/tx-eva-data/Data1/dailyFile/test/%s.xls" % date_i)
+                    sheet2.write(11, 8, deal_date(date_i), set_style_1('Times New Roman', 205, False))
+                    workboot1.save("/media/tx-eva-data/Data1/CFDA_file/清洗记录表/split_table/%s.xls" % date_i)
+
+
+def get_hosp_dict():
+    '''
+    根据36家有协议医院name和编号
+    :return: dict_a  返回dict
+    '''
+    xls_path = '/home/tx-eva-data/PycharmProjects/deal-dicom-02/com/infervision/0907/医院对应编号.xlsx'
+    read_word = xlrd.open_workbook(xls_path)
+    table = read_word.sheets()[0]
+    rows = table.nrows
+    # print(table.nrows)
+    dict_a = {}
+    for row in range(rows):
+        hosp_name = table.row_values(row)[0] # 对excel表里面的36有协议的医院的名称和编号对应起来放到dict里面去
+        hosp_id = table.row_values(row)[1]
+        dict_a[hosp_name] = hosp_id
+    return dict_a
+
 
 
 def deal_date(date_str):
@@ -175,5 +210,8 @@ def set_style_1(name, height, bold=False):
 
 if __name__ == '__main__':
     # print(deal_date('2017.12.12'))
+    '''
+    拆分清洗记录表
+    '''
     write_excel()
 
