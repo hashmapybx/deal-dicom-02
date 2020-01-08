@@ -41,9 +41,19 @@ def deal_data(dcm_path, dec_path):
     out_path = os.path.join(dec_path, new_path, pid)
     # print(out_path)
     info = pydicom.read_file(dcm_path, force=True)
-    studyInstanceUID = info.StudyInstanceUID
-    seriesInstanceUID = info.SeriesInstanceUID
-    sopInstanceUID = info.SOPInstanceUID
+    try:
+        studyInstanceUID = info.StudyInstanceUID
+    except:
+        studyInstanceUID = "info.StudyInstanceUID"
+
+    try:
+        seriesInstanceUID = info.SeriesInstanceUID
+    except:
+        seriesInstanceUID = "info.SeriesInstanceUID"
+    try:
+        sopInstanceUID = info.SOPInstanceUID
+    except:
+        sopInstanceUID = "no_sopInstanceUID"
     new_name = os.path.join(studyInstanceUID, seriesInstanceUID)
     save_path = os.path.join(out_path, new_name)
     if not os.path.exists(save_path):
@@ -63,8 +73,8 @@ def Worker(queue):
 
 if __name__ == '__main__':
     start = time.time()
-    src_path = "/media/tx-eva-data/NAS/基础数据库/中国人民解放军第307医院/TMP"
-    dec_path = "/media/tx-eva-data/NAS/原始数据库/中国人民解放军第307医院"
+    src_path = "/media/tx-eva-data/NAS/基础数据库/华中科技大学同济医学院附属同济医院/2017_07_13_abnormal"
+    dec_path = "/media/tx-eva-data/NAS/原始数据库/华中科技大学同济医学院附属同济医院"
 
     queue = multiprocessing.JoinableQueue()
     list_p = []

@@ -19,6 +19,36 @@
     header 默认是0 行作为列索引
     
    
+## git 的相关操作 
+    下面的命令是在报错的时候会出现的:
+    To ssh://code.infervision.com:2022/data-group/ruku.git
+     ! [rejected]        master -> master (fetch first)
+    error: failed to push some refs to 'ssh://git@code.infervision.com:2022/data-group/ruku.git'
+    hint: Updates were rejected because the remote contains work that you do
+    hint: not have locally. This is usually caused by another repository pushing
+    hint: to the same ref. You may want to first integrate the remote changes
+    hint: (e.g., 'git pull ...') before pushing again.
+    是因为远程的README.md文件没有关联到本地
+    
+    这个命令是把远程的repositiory 拉取到本地 进行覆盖 在把本地的提交
+    git pull --rebase origin master
+    另外一般在解决git上传时候的冲突的时候
+    推荐是
+    git push origin master -f 强制把本地的代码提交到远程的repository里面去
+    
+    
+    标注数据库的数据量:
+    detection
+        test:  188+198 = 386
+        train: 7043 + 3088 + 2856 + 1555=14542
+    lobe:
+         test: 145 
+         train: 428+211=639 
+    segmention:
+          test:   267
+          train:  2998     
+    
+    
    
    
    

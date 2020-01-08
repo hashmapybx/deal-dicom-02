@@ -5,11 +5,11 @@ Author: ybx
 """
 import os
 import sys
-import dicom
+import pydicom
 import pandas as pd
 
 
-path = "/media/tx-eva-22/mnt/标注数据库/交付数据/detection/train/2.0/2018_01_15/dcm"
+path = "/media/tx-eva-data/Data4/CE_DATA/基础数据库"
 id_list = []
 KVP_list = []
 XRayTubeCurrent_list = []
@@ -42,111 +42,118 @@ folder_List = []
 sop_list = []
 
 for folder in os.listdir(path):
-    folder_path = os.path.join(path,folder)
-    for dcm_file in os.listdir(folder_path):
-        count += 1
-        dcm_file_path = os.path.join(folder_path,dcm_file)
-        ds = dicom.read_file(dcm_file_path,force=True,stop_before_pixels=True)
-        try:
-            PatientAge = ds.PatientAge
-        except:
-            PatientAge = "N/A"
-        try:
-            kvp = ds.KVP
-        except:
-            kvp = "N/A"
-        try:
-            XRayTubeCurrent = ds.XRayTubeCurrent
-        except:
-            XRayTubeCurrent = "N/A"
-        try:
-            convolutionKernel = ds.ConvolutionKernel
-        except:
-            convolutionKernel = "N/A"
-        try:
-            sliceThickness = ds.SliceThickness
-        except:
-            sliceThickness = "N/A"
-        try:
-            PixelSpacing = ds.PixelSpacing
-        except:
-            PixelSpacing = "N/A"
-        try:
-            Manufacturer = ds.Manufacturer
-        except:
-            Manufacturer = "N/A"
-        try:
-            ManufacturerModelName = ds.ManufacturerModelName
-        except:
-            ManufacturerModelName = "N/A"
-        try:
-            PatientSex = ds.PatientSex
-        except:
-            PatientSex = "N/A"
-        try:
-            ID = ds.PatientID
-        except:
-            ID = "N/A"
-        try:
-            AccessionNumber = ds.AccessionNumber
-        except:
-            AccessionNumber = "N/A"
-        try:
-            StudyDate = ds.StudyDate
-        except:
-            StudyDate = "N/A"
-        StudyTime = ds.StudyTime
-        WindowCenter = str(ds.WindowCenter)
-        WindowWidth = str(ds.WindowWidth)
-        StudyInstanceUID = ds.StudyInstanceUID
-        SeriesInstanceUID = ds.SeriesInstanceUID
-        SOPInstanceUID = ds.SOPInstanceUID
-        try:
-            PatientDate = ds.PatientBirthDate
-        except:
-            PatientDate = "N/A"
-        try:
-            BodyPartExamined = ds.BodyPartExamined
-        except:
-            BodyPartExamined = "N/A"
+    h_folder_path = os.path.join(path,folder)
+    for sfile in os.listdir(h_folder_path):
+        t_folder_path = os.path.join(h_folder_path, sfile)
+        if sfile == 'anno' or sfile.endswith('.txt'):
+            continue
+        for tfile in os.listdir(t_folder_path):
+            dcm_folder_path = os.path.join(t_folder_path, tfile)
 
-        try:
-            LargestImagePixelValue = ds.LargestImagePixelValue
-        except:
-            LargestImagePixelValue = "N/A"
-        try:
-            SmallestImagePixelValue = ds.SmallestImagePixelValue
-        except:
-            SmallestImagePixelValue = "N/A"
-        try:
-            WW = ds.WindowCenterWidthExplanation
-        except:
-            WW = "N/A"
-        id_list.append(str(ID))
-        folder_List.append(folder)
-        sop_list.append(SOPInstanceUID)
-        accession_list.append(AccessionNumber)
-        sex_list.append(PatientSex)
-        age_list.append(PatientAge)
-        PatientDate_list.append(PatientDate)
-        studydate_list.append(StudyDate)
-        studytime_list.append(StudyTime)
-        studyuid_list.append(StudyInstanceUID)
-        seruid_list.append(SeriesInstanceUID)
-        Manufacturer_list.append(Manufacturer)
-        ManufacturerModelName_list.append(ManufacturerModelName)
-        bodypart_list.append(BodyPartExamined)
-        slice_list.append(sliceThickness)
-        KVP_list.append(kvp)
-        XRayTubeCurrent_list.append(XRayTubeCurrent)
-        convolutionKernel_list.append(convolutionKernel)
-        PixelSpacing_list.append(PixelSpacing)
-        Smallest_list.append(SmallestImagePixelValue)
-        Largest_list.append(LargestImagePixelValue)
-        wc_list.append(WindowCenter)
-        ww_list.append(WindowWidth)
-        WCWW_list.append(WW)
-        break
+            for dcm_file in os.listdir(dcm_folder_path):
+                count += 1
+                dcm_file_path = os.path.join(dcm_folder_path,dcm_file)
+                ds = pydicom.read_file(dcm_file_path,force=True,stop_before_pixels=True)
+                try:
+                    PatientAge = ds.PatientAge
+                except:
+                    PatientAge = "N/A"
+                try:
+                    kvp = ds.KVP
+                except:
+                    kvp = "N/A"
+                try:
+                    XRayTubeCurrent = ds.XRayTubeCurrent
+                except:
+                    XRayTubeCurrent = "N/A"
+                try:
+                    convolutionKernel = ds.ConvolutionKernel
+                except:
+                    convolutionKernel = "N/A"
+                try:
+                    sliceThickness = ds.SliceThickness
+                except:
+                    sliceThickness = "N/A"
+                try:
+                    PixelSpacing = ds.PixelSpacing
+                except:
+                    PixelSpacing = "N/A"
+                try:
+                    Manufacturer = ds.Manufacturer
+                except:
+                    Manufacturer = "N/A"
+                try:
+                    ManufacturerModelName = ds.ManufacturerModelName
+                except:
+                    ManufacturerModelName = "N/A"
+                try:
+                    PatientSex = ds.PatientSex
+                except:
+                    PatientSex = "N/A"
+                try:
+                    ID = ds.PatientID
+                except:
+                    ID = "N/A"
+                try:
+                    AccessionNumber = ds.AccessionNumber
+                except:
+                    AccessionNumber = "N/A"
+                try:
+                    StudyDate = ds.StudyDate
+                except:
+                    StudyDate = "N/A"
+                StudyTime = ds.StudyTime
+                WindowCenter = str(ds.WindowCenter)
+                WindowWidth = str(ds.WindowWidth)
+                StudyInstanceUID = ds.StudyInstanceUID
+                SeriesInstanceUID = ds.SeriesInstanceUID
+                SOPInstanceUID = ds.SOPInstanceUID
+                try:
+                    PatientDate = ds.PatientBirthDate
+                except:
+                    PatientDate = "N/A"
+                try:
+                    BodyPartExamined = ds.BodyPartExamined
+                except:
+                    BodyPartExamined = "N/A"
+
+                try:
+                    LargestImagePixelValue = ds.LargestImagePixelValue
+                except:
+                    LargestImagePixelValue = "N/A"
+                try:
+                    SmallestImagePixelValue = ds.SmallestImagePixelValue
+                except:
+                    SmallestImagePixelValue = "N/A"
+                try:
+                    WW = ds.WindowCenterWidthExplanation
+                except:
+                    WW = "N/A"
+                id_list.append(str(ID))
+                folder_List.append(folder)
+                sop_list.append(SOPInstanceUID)
+                accession_list.append(AccessionNumber)
+                sex_list.append(PatientSex)
+                age_list.append(PatientAge)
+                PatientDate_list.append(PatientDate)
+                studydate_list.append(StudyDate)
+                studytime_list.append(StudyTime)
+                studyuid_list.append(StudyInstanceUID)
+                seruid_list.append(SeriesInstanceUID)
+                Manufacturer_list.append(Manufacturer)
+                ManufacturerModelName_list.append(ManufacturerModelName)
+                bodypart_list.append(BodyPartExamined)
+                slice_list.append(sliceThickness)
+                KVP_list.append(kvp)
+                XRayTubeCurrent_list.append(XRayTubeCurrent)
+                convolutionKernel_list.append(convolutionKernel)
+                PixelSpacing_list.append(PixelSpacing)
+                Smallest_list.append(SmallestImagePixelValue)
+                Largest_list.append(LargestImagePixelValue)
+                wc_list.append(WindowCenter)
+                ww_list.append(WindowWidth)
+                WCWW_list.append(WW)
+                break
 writer = pd.ExcelWriter(path+'_info.xls',encoding = 'unicode_escape')
 df = pd.DataFrame(data={'ID':id_list,'Age':age_list,'AccessionNumber':accession_list,
                         'ConvolutionKernel':convolutionKernel_list,'originalFolderName':folder_List,

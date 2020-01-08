@@ -44,7 +44,7 @@ def desensitization(save_path, filepath, originalDataPath, tuomin_path):
             if hasattr(info, 'InstanceNumber'):
                 ID = str(info.StudyInstanceUID) + '_' + str(info.InstanceNumber)
             else:
-                ID = str(info.StudyInstanceUID)
+                ID = None
         SeriesInstanceUID = info.SeriesInstanceUID
         file_name = filepath.split('/')[-1]
         folder_name = filepath.replace(originalDataPath, '')
@@ -92,9 +92,9 @@ def desensitization(save_path, filepath, originalDataPath, tuomin_path):
                             filemode='w')
         logging.info(' %s\n%s\n%s\n' % (ID, filepath, "Sensitive information has been removed!!"))
     except:
-        with open(originalDataPath + str(i) + '_error.log', 'a+') as errorfile:
-            print >> errorfile, filepath
-
+        # with open(originalDataPath + str(i) + '_error.log', 'a+') as errorfile:
+        #     print >> errorfile, filepath
+        pass
 
 def Worker(tuomin_path):
     while True:
@@ -108,7 +108,7 @@ def Worker(tuomin_path):
 if __name__ == '__main__':
     start = time.time()
 
-    originalDataPath = "/media/tx-eva-data/Data3/2019-09-02-德化医院/德化县医院/6/2019-09-08_dehuaxianyiyuan_dr_liuyue/dicom"
+    originalDataPath = "/media/tx-eva-data/Data2/ShaLong/ShaLong/dicom/20190514"
     cpuCount = cpu_count()  # 计算本机CPU核数
     # save_path = originalDataPath + '_save'#脱敏文件保存路径
     save_path = originalDataPath + "_save"

@@ -8,8 +8,8 @@ import pydicom,os,shutil
 '''
 筛出纵膈窗
 '''
-path = '/media/tx-eva-data/Data3/bejiingdaxueshenzhenfushuyiyuan/test_data/bdsz_test_data_save/CT/'
-zongge_path = '/media/tx-eva-data/Data3/bejiingdaxueshenzhenfushuyiyuan/test_data/bdsz_test_data_save/zongge'
+path = '/media/tx-eva-data/Data4/柳州人民医院/dcm_save/CT'
+zongge_path = '/media/tx-eva-data/Data4/柳州人民医院/dcm_save/zonggechuang'
 for folder in os.listdir(path):
     folder_path = os.path.join(path,folder)
     folderName = folder_path.split('/')[-1]

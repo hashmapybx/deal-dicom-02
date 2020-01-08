@@ -111,7 +111,7 @@ def Worker(tuomin_path):
 if __name__ == '__main__':
     start = time.time()
 
-    originalDataPath = "/media/tx-eva-data/Data1/test_log/dcm"
+    originalDataPath = "/media/tx-eva-data/Data3/58server_dataclean/dcm/2018.02.26_DaLianZhongShan_detection/tmp/dcm"
     cpuCount = cpu_count()  # 计算本机CPU核数
     # save_path = originalDataPath + '_save'#脱敏文件保存路径
     save_path = originalDataPath + "_save"
